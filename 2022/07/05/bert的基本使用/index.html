@@ -1,0 +1,693 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="听风">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="零基础入门NLP赛事1. 报名比赛1.1链接： http:&#x2F;&#x2F;challenge.xfyun.cn&#x2F;topic&#x2F;info?type&#x3D;epidemic-weibo1.2 赛事任务如图： 1.3 评估指标为AUC2.bert相关工具类1234567891011121314151617181920212223242526272829303132333435363738394041424344454647">
+<meta property="og:type" content="article">
+<meta property="og:title" content="疫情微博情感识别">
+<meta property="og:url" content="http://example.com/2022/07/05/bert%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="听风">
+<meta property="og:description" content="零基础入门NLP赛事1. 报名比赛1.1链接： http:&#x2F;&#x2F;challenge.xfyun.cn&#x2F;topic&#x2F;info?type&#x3D;epidemic-weibo1.2 赛事任务如图： 1.3 评估指标为AUC2.bert相关工具类1234567891011121314151617181920212223242526272829303132333435363738394041424344454647">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/07/05/bert%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/img.png">
+<meta property="article:published_time" content="2022-07-05T03:18:32.000Z">
+<meta property="article:modified_time" content="2022-07-05T03:32:36.155Z">
+<meta property="article:author" content="听风">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/07/05/bert%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/img.png">
+  
+  
+  
+  <title>疫情微博情感识别 - 听风</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"7C1QoQShmj2GocTUSsCfvl07-gzGzoHsz","app_key":"tGH8AvvvUAVa08GUUY7kX8YC","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>听风</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="疫情微博情感识别"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-05 11:18" pubdate>
+          2022年7月5日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          69 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">疫情微博情感识别</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="零基础入门NLP赛事"><a href="#零基础入门NLP赛事" class="headerlink" title="零基础入门NLP赛事"></a>零基础入门NLP赛事</h1><h2 id="1-报名比赛"><a href="#1-报名比赛" class="headerlink" title="1. 报名比赛"></a>1. 报名比赛</h2><h3 id="1-1链接：-http-challenge-xfyun-cn-topic-info-type-epidemic-weibo"><a href="#1-1链接：-http-challenge-xfyun-cn-topic-info-type-epidemic-weibo" class="headerlink" title="1.1链接： http://challenge.xfyun.cn/topic/info?type=epidemic-weibo"></a>1.1链接： <a target="_blank" rel="noopener" href="http://challenge.xfyun.cn/topic/info?type=epidemic-weibo">http://challenge.xfyun.cn/topic/info?type=epidemic-weibo</a></h3><h3 id="1-2-赛事任务如图："><a href="#1-2-赛事任务如图：" class="headerlink" title="1.2 赛事任务如图："></a>1.2 赛事任务如图：</h3><p><img src="img.png" srcset="/img/loading.gif" lazyload alt="img.png"></p>
+<h3 id="1-3-评估指标为AUC"><a href="#1-3-评估指标为AUC" class="headerlink" title="1.3 评估指标为AUC"></a>1.3 评估指标为AUC</h3><h2 id="2-bert相关工具类"><a href="#2-bert相关工具类" class="headerlink" title="2.bert相关工具类"></a>2.bert相关工具类</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch<br><span class="hljs-keyword">import</span> torch.nn.functional <span class="hljs-keyword">as</span> F<br><span class="hljs-keyword">from</span> torch <span class="hljs-keyword">import</span> nn<br><span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset, DataLoader<br><span class="hljs-keyword">from</span> transformers <span class="hljs-keyword">import</span> BertModel<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">RoleDataset</span>(<span class="hljs-title class_ inherited__">Dataset</span>):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, texts, labels, tokenizer, max_len</span>):<br>        self.texts = texts<br>        self.labels = labels<br>        self.tokenizer = tokenizer  <span class="hljs-comment"># 分词</span><br>        self.max_len = max_len<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__len__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(self.texts)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__getitem__</span>(<span class="hljs-params">self, item</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        item 为数据索引，迭代取第item条数据</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        text = <span class="hljs-built_in">str</span>(self.texts[item])<br>        label = self.labels[item]<br><br>        encoding = self.tokenizer.encode_plus(<br>            text,<br>            add_special_tokens=<span class="hljs-literal">True</span>,<br>            max_length=self.max_len,<br>            return_token_type_ids=<span class="hljs-literal">True</span>,<br>            pad_to_max_length=<span class="hljs-literal">True</span>,<br>            return_attention_mask=<span class="hljs-literal">True</span>,<br>            return_tensors=<span class="hljs-string">&#x27;pt&#x27;</span>,<br>            truncation=<span class="hljs-literal">True</span><br>        )<br><br>        sampler = &#123;<br>            <span class="hljs-string">&#x27;texts&#x27;</span>: text,<br>            <span class="hljs-string">&#x27;input_ids&#x27;</span>: encoding[<span class="hljs-string">&#x27;input_ids&#x27;</span>].flatten(),<br>            <span class="hljs-string">&#x27;attention_mask&#x27;</span>: encoding[<span class="hljs-string">&#x27;attention_mask&#x27;</span>].flatten(),<br>            <span class="hljs-string">&#x27;label&#x27;</span>: torch.tensor(label)<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> sampler<br><br><br><span class="hljs-comment"># 创建数据集函数</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">create_data_loader</span>(<span class="hljs-params">df, tokenizer, max_len, batch_size</span>):<br>    ds = RoleDataset(<br>        texts=df[<span class="hljs-string">&#x27;text&#x27;</span>].values,<br>        labels=df[<span class="hljs-string">&#x27;label&#x27;</span>].values,<br>        tokenizer=tokenizer,<br>        max_len=max_len<br>    )<br><br>    <span class="hljs-keyword">return</span> DataLoader(<br>        ds,<br>        batch_size=batch_size,<br>    )<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AttentionHead</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, in_features, hidden_dim</span>):<br>        <span class="hljs-built_in">super</span>().__init__()<br>        self.W = nn.Linear(in_features, hidden_dim)<br>        self.V = nn.Linear(hidden_dim, <span class="hljs-number">1</span>)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, features</span>):<br>        att = torch.tanh(self.W(features))<br>        score = self.V(att)<br>        attention_weights = torch.softmax(score, dim=<span class="hljs-number">1</span>)<br>        context_vector = torch.<span class="hljs-built_in">sum</span>(attention_weights * features, dim=<span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">return</span> context_vector<br><br><br><span class="hljs-comment"># fine-tuning</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">EmotionClassifier</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, n_classes, PRE_TRAINED_MODEL_NAME</span>):<br>        <span class="hljs-built_in">super</span>(EmotionClassifier, self).__init__()<br>        self.bert = BertModel.from_pretrained(PRE_TRAINED_MODEL_NAME)<br>        self.out = nn.Linear(self.bert.config.hidden_size * <span class="hljs-number">2</span>, n_classes)<br>        self.head = AttentionHead(self.bert.config.hidden_size, self.bert.config.hidden_size)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, input_ids, attention_mask</span>):<br>        output = self.bert(<br>            input_ids=input_ids,<br>            attention_mask=attention_mask<br>        )<br>        last_hidden_state = output[<span class="hljs-number">0</span>]<br>        input_mask_expanded = attention_mask.unsqueeze(-<span class="hljs-number">1</span>).expand(last_hidden_state.size()).<span class="hljs-built_in">float</span>()<br>        sum_embeddings = torch.<span class="hljs-built_in">sum</span>(last_hidden_state * input_mask_expanded, <span class="hljs-number">1</span>)<br>        sum_mask = input_mask_expanded.<span class="hljs-built_in">sum</span>(<span class="hljs-number">1</span>)<br>        sum_mask = torch.clamp(sum_mask, <span class="hljs-built_in">min</span>=<span class="hljs-number">1e-9</span>)<br>        mean_embeddings = sum_embeddings / sum_mask<br>        head_out = self.head(output[<span class="hljs-number">0</span>])<br>        all_out = torch.cat([head_out, mean_embeddings], <span class="hljs-number">1</span>)<br>        logits = self.out(all_out)<br>        <span class="hljs-keyword">return</span> logits<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FGM</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, model</span>):<br>        self.model = model<br>        self.backup = &#123;&#125;<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">attack</span>(<span class="hljs-params">self, epsilon=<span class="hljs-number">1.</span>, emb_name=<span class="hljs-string">&#x27;word_embeddings&#x27;</span></span>):<br>        <span class="hljs-comment"># emb_name这个参数要换成你模型中embedding的参数名</span><br>        <span class="hljs-keyword">for</span> name, param <span class="hljs-keyword">in</span> self.model.named_parameters():<br>            <span class="hljs-keyword">if</span> param.requires_grad <span class="hljs-keyword">and</span> emb_name <span class="hljs-keyword">in</span> name:<br>                self.backup[name] = param.data.clone()<br>                <span class="hljs-comment">#                 print(&#x27;grad: &#x27;, param.grad)</span><br>                norm = torch.norm(param.grad)<br>                <span class="hljs-keyword">if</span> norm != <span class="hljs-number">0</span>:<br>                    r_at = epsilon * param.grad / norm<br>                    param.data.add_(r_at)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">restore</span>(<span class="hljs-params">self, emb_name=<span class="hljs-string">&#x27;word_embeddings&#x27;</span></span>):<br>        <span class="hljs-comment"># emb_name这个参数要换成你模型中embedding的参数名</span><br>        <span class="hljs-keyword">for</span> name, param <span class="hljs-keyword">in</span> self.model.named_parameters():<br>            <span class="hljs-keyword">if</span> param.requires_grad <span class="hljs-keyword">and</span> emb_name <span class="hljs-keyword">in</span> name:<br>                <span class="hljs-keyword">assert</span> name <span class="hljs-keyword">in</span> self.backup<br>                param.data = self.backup[name]<br>        self.backup = &#123;&#125;<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">FocalLoss</span>(nn.Module):<br>    <span class="hljs-string">&quot;&quot;&quot;Multi-class Focal loss implementation&quot;&quot;&quot;</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, gamma=<span class="hljs-number">2</span>, weight=<span class="hljs-literal">None</span>, reduction=<span class="hljs-string">&#x27;mean&#x27;</span>, ignore_index=-<span class="hljs-number">100</span></span>):<br>        <span class="hljs-built_in">super</span>(FocalLoss, self).__init__()<br>        self.gamma = gamma<br>        self.weight = weight<br>        self.ignore_index = ignore_index<br>        self.reduction = reduction<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, inputs, target</span>):<br>        <span class="hljs-string">&quot;&quot;&quot;</span><br><span class="hljs-string">        input: [N, C]</span><br><span class="hljs-string">        target: [N, ]</span><br><span class="hljs-string">        &quot;&quot;&quot;</span><br>        target = target.long()<br>        log_pt = torch.log_softmax(inputs, dim=<span class="hljs-number">1</span>)<br>        pt = torch.exp(log_pt)<br>        log_pt = (<span class="hljs-number">1</span> - pt) ** self.gamma * log_pt<br>        loss = torch.nn.functional.nll_loss(log_pt, target, self.weight, reduction=self.reduction,<br>                                            ignore_index=self.ignore_index)<br>        <span class="hljs-keyword">return</span> loss<br></code></pre></td></tr></table></figure>
+
+<h2 id="3-比赛baseline"><a href="#3-比赛baseline" class="headerlink" title="3. 比赛baseline"></a>3. 比赛baseline</h2><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br></pre></td><td class="code"><pre><code class="hljs routeros">import pandas as pd<br>import torch<br><span class="hljs-keyword">from</span> tools import create_data_loader, EmotionClassifier, FocalLoss, FGM<br>import torch.nn as nn<br>import warnings<br>import glob<br>import numpy as np<br><span class="hljs-keyword">from</span> transformers import BertTokenizer, AdamW, get_linear_schedule_with_warmup<br>import os<br><span class="hljs-keyword">from</span> sklearn.model_selection import StratifiedKFold<br><span class="hljs-keyword">from</span> tqdm import tqdm<br><br>os.environ[<span class="hljs-string">&#x27;CUDA_LAUNCH_BLOCKING&#x27;</span>] = <span class="hljs-string">&#x27;1&#x27;</span><br>warnings.filterwarnings(<span class="hljs-string">&#x27;ignore&#x27;</span>)<br><br>df = pd.read_csv(<span class="hljs-string">&#x27;../data/clean_data.csv&#x27;</span>)<br>train = df[0:60000]<br>train[<span class="hljs-string">&#x27;label&#x27;</span>] = train[<span class="hljs-string">&#x27;label&#x27;</span>].astype(<span class="hljs-string">&#x27;long&#x27;</span>)<br>test = df[-10000:]<br><br>RANDOM_SEED = 42<br>np.random.seed(RANDOM_SEED)<br><span class="hljs-comment"># torch.manual_seed(RANDOM_SEED)</span><br><br>device = torch.device(<span class="hljs-string">&quot;cuda:0&quot;</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">&quot;cpu&quot;</span>)<br><span class="hljs-comment"># device = torch.device(&#x27;cpu&#x27;)</span><br><span class="hljs-built_in">print</span>(torch.cuda.is_available())<br><br>PRE_TRAINED_MODEL_NAME = <span class="hljs-string">&#x27;../pre_train_model/roberta&#x27;</span><br>tokenizer = BertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)<br><br>skf = StratifiedKFold(<span class="hljs-attribute">n_splits</span>=5, <span class="hljs-attribute">random_state</span>=2022, <span class="hljs-attribute">shuffle</span>=<span class="hljs-literal">True</span>)<br>fold_idx = 1<br><br>EPOCHS = 1  # 训练轮数<br>BATCH_SIZE = 1<br>MAX_LEN = 20<br>LR = 3e-5<br><br><span class="hljs-keyword">for</span> train_idx, val_idx <span class="hljs-keyword">in</span> skf.split(train[<span class="hljs-string">&#x27;label&#x27;</span>], train[<span class="hljs-string">&#x27;label&#x27;</span>]):<br>    train_data_loader = create_data_loader(train.iloc[train_idx], tokenizer, MAX_LEN, BATCH_SIZE)<br>    val_data_loader = create_data_loader(train.iloc[val_idx], tokenizer, MAX_LEN, BATCH_SIZE)<br>    model = EmotionClassifier(2, PRE_TRAINED_MODEL_NAME)<br>    model.<span class="hljs-keyword">to</span>(device)<br><br>    optimizer = AdamW(model.parameters(), <span class="hljs-attribute">lr</span>=LR, <span class="hljs-attribute">weight_decay</span>=0.01)<br>    total_steps = len(train_data_loader) * EPOCHS<br><br>   <span class="hljs-built_in"> scheduler </span>= get_linear_schedule_with_warmup(<br>        optimizer,<br>        <span class="hljs-attribute">num_warmup_steps</span>=0.1,<br>        <span class="hljs-attribute">num_training_steps</span>=total_steps<br>    )<br><br>    loss_fn = FocalLoss().<span class="hljs-keyword">to</span>(device)<br><br>    best_acc = 0<br>    fgm = FGM(model)<br>    <span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> range(EPOCHS):<br>        # 训练<br>        model = model.train()<br>        j = 1<br>        <span class="hljs-keyword">for</span> sample <span class="hljs-keyword">in</span> tqdm(train_data_loader):<br>            input_ids = sample[<span class="hljs-string">&quot;input_ids&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>            attention_mask = sample[<span class="hljs-string">&quot;attention_mask&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>            label = sample[<span class="hljs-string">&#x27;label&#x27;</span>].<span class="hljs-keyword">to</span>(device)<br>            logits = model(<br>                <span class="hljs-attribute">input_ids</span>=input_ids,<br>                <span class="hljs-attribute">attention_mask</span>=attention_mask<br>            )<br>            loss = loss_fn(logits, label)<br><br>            <span class="hljs-keyword">if</span> j % 50 == 0:<br>                <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Train %d: loss:%f&#x27;</span> % (j, loss.detach().cpu().numpy()))<br>            loss.backward()<br>            nn.utils.clip_grad_norm_(model.parameters(), <span class="hljs-attribute">max_norm</span>=1.0)<br>            # 对抗训练<br>            fgm.attack()  # 在embedding上添加对抗扰动<br>            loss_adv = model(<br>                <span class="hljs-attribute">input_ids</span>=input_ids,<br>                <span class="hljs-attribute">attention_mask</span>=attention_mask<br>            )<br>            loss_adv2 = loss_fn(loss_adv, label)<br>            loss_adv2.backward()  # 反向传播，并在正常的grad基础上，累加对抗训练的梯度<br>            fgm.restore()  # 恢复embedding参数<br><br>            optimizer.<span class="hljs-keyword">step</span>()<br>            scheduler.<span class="hljs-keyword">step</span>()<br>            optimizer.zero_grad()<br><br>            # 验证<br>            <span class="hljs-keyword">if</span> (j % 100 == 0) <span class="hljs-keyword">or</span> (j % len(train_data_loader) == 0):<br>                all_pred, all_label = [], []<br>                with torch.no_grad():<br>                    model = model.eval()<br>                    <span class="hljs-keyword">for</span> sampler <span class="hljs-keyword">in</span> val_data_loader:<br>                        input_ids = sampler[<span class="hljs-string">&quot;input_ids&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>                        attention_mask = sampler[<span class="hljs-string">&quot;attention_mask&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>                        label = sampler[<span class="hljs-string">&#x27;label&#x27;</span>].<span class="hljs-keyword">to</span>(device)<br>                        logits = model(<br>                            <span class="hljs-attribute">input_ids</span>=input_ids,<br>                            <span class="hljs-attribute">attention_mask</span>=attention_mask<br>                        )<br>                        all_pred.extend(logits.argmax(-1).detach().cpu().numpy())<br>                        all_label.extend(label.detach().cpu().numpy())<br>                    model = model.train()<br>                    acc = (np.array(all_label) == np.array(all_pred)).astype(np.float32).mean()<br>                    <span class="hljs-built_in">print</span>(<span class="hljs-string">&#x27;Val acc %.5f&#x27;</span> % acc)<br>                    <span class="hljs-keyword">if</span> acc &gt; best_acc:<br>                        best_acc = acc<br>                        torch.save(model.state_dict(), <span class="hljs-string">&#x27;../models//&#x27;</span> + str(fold_idx) + <span class="hljs-string">&#x27;.pth&#x27;</span>)<br>            j += 1<br>    fold_idx += 1<br>    <br><span class="hljs-comment"># 预测</span><br>test[<span class="hljs-string">&#x27;label&#x27;</span>] = 0<br>test_data_loader = create_data_loader(test, tokenizer, MAX_LEN, BATCH_SIZE)<br><br>test_pred_tta = None<br><span class="hljs-keyword">for</span> path <span class="hljs-keyword">in</span> glob.glob(<span class="hljs-string">&#x27;../models//*.pth&#x27;</span>):<br>    # 加载模型<br>    <span class="hljs-built_in">print</span>(path)<br>    model = EmotionClassifier(2, PRE_TRAINED_MODEL_NAME)<br>    model.load_state_dict(torch.load(path, <span class="hljs-attribute">map_location</span>=<span class="hljs-string">&quot;cpu&quot;</span>))<br>    model.<span class="hljs-keyword">to</span>(device)<br><br>    test_pred = []<br>    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;load model finished&quot;</span>)<br>    with torch.no_grad():<br>        model.eval()<br>        <span class="hljs-keyword">for</span> sample <span class="hljs-keyword">in</span> test_data_loader:<br>            input_ids = sample[<span class="hljs-string">&quot;input_ids&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>            attention_mask = sample[<span class="hljs-string">&quot;attention_mask&quot;</span>].<span class="hljs-keyword">to</span>(device)<br>            logits = model(<br>                <span class="hljs-attribute">input_ids</span>=input_ids,<br>                <span class="hljs-attribute">attention_mask</span>=attention_mask<br>            )<br>            test_pred.append(logits.detach().cpu().numpy())<br><br>    <span class="hljs-keyword">if</span> test_pred_tta is None:<br>        test_pred_tta = np.vstack(test_pred)<br>    <span class="hljs-keyword">else</span>:<br>        test_pred_tta += np.vstack(test_pred)<br><br><span class="hljs-comment"># 生成结果</span><br>test[<span class="hljs-string">&#x27;label&#x27;</span>] = test_pred_tta.argmax(1)<br></code></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/NLP/" class="category-chain-item">NLP</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>疫情微博情感识别</div>
+      <div>http://example.com/2022/07/05/bert的基本使用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>听风</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月5日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/04/%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0/" title="测试文章">
+                        <span class="hidden-mobile">测试文章</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.4.17/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"7C1QoQShmj2GocTUSsCfvl07-gzGzoHsz","appKey":"tGH8AvvvUAVa08GUUY7kX8YC","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
