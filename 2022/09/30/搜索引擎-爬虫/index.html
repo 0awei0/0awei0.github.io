@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2022/09/30/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-%E7%88%AC%E8%99%AB/1.jpg">
 <meta property="article:published_time" content="2022-09-30T02:35:20.000Z">
-<meta property="article:modified_time" content="2022-09-30T02:44:01.882Z">
+<meta property="article:modified_time" content="2022-09-30T02:46:33.677Z">
 <meta property="article:author" content="听风">
 <meta property="article:tag" content="原创">
 <meta name="twitter:card" content="summary_large_image">
@@ -304,7 +304,7 @@
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Queue</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        self.elements = []<br>        self.index = <span class="hljs-number">0</span><br>	<span class="hljs-comment"># 元素出队列</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">dequeue</span>(<span class="hljs-params">self</span>):<br>        element = self.elements[self.index]<br>        self.index += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> element<br>	<span class="hljs-comment"># 元素入队列</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enqueue</span>(<span class="hljs-params">self, element</span>):<br>        <span class="hljs-keyword">if</span> element[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>] == <span class="hljs-string">&quot;https&quot;</span> <span class="hljs-keyword">or</span> element[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>] == <span class="hljs-string">&quot;http&quot;</span>:<br>            <span class="hljs-keyword">if</span> element <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> self.elements:<br>                self.elements.append(element)<br>	<span class="hljs-comment"># 判断队列是否为空</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">isnull</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">if</span> self.index == <span class="hljs-built_in">len</span>(self.elements):<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br></code></pre></td></tr></table></figure>
 
 <h2 id="2-深度优先与广度优先"><a href="#2-深度优先与广度优先" class="headerlink" title="2.深度优先与广度优先"></a>2.深度优先与广度优先</h2><p><img src="1.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
-<p>​                                                                                                                            图1</p>
+<p>​                                                                                                       </p>
 <p>若网页结构如上图，深度优先的爬取顺序为：A、B、D、E、I、C、F、G、H（递归实现）</p>
 <p>广度优先的爬取顺序为：A、B、C、D、E、F、G、H、I（队列实现）</p>
 <h2 id="3-广度优先爬取"><a href="#3-广度优先爬取" class="headerlink" title="3.广度优先爬取"></a>3.广度优先爬取</h2><p>使用上文提到的队列可以很简单的实现广度优先算法。</p>
@@ -336,13 +336,6 @@
         
   <a href="/categories/%E7%88%AC%E8%99%AB/" class="category-chain-item">爬虫</a>
   
-  
-    <span>></span>
-    
-  <a href="/categories/%E7%88%AC%E8%99%AB/python/" class="category-chain-item">python</a>
-  
-  
-
   
 
       </span>
