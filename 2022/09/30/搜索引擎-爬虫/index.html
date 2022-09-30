@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="听风">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="从零开始做一个搜索引擎–爬虫实现1. 队列实现使用广度优先爬取网页需要一个队列辅助存储网页的url，这里实现一个元素单一的队列，方便后续使用。 1234567891011121314151617181920class Queue:    def __init__(self):        self.elements &#x3D; []        self.index &#x3D; 0	# 元素出队列    de">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零开始做一个搜索引擎--爬虫实现">
+<meta property="og:url" content="http://example.com/2022/09/30/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-%E7%88%AC%E8%99%AB/index.html">
+<meta property="og:site_name" content="听风">
+<meta property="og:description" content="从零开始做一个搜索引擎–爬虫实现1. 队列实现使用广度优先爬取网页需要一个队列辅助存储网页的url，这里实现一个元素单一的队列，方便后续使用。 1234567891011121314151617181920class Queue:    def __init__(self):        self.elements &#x3D; []        self.index &#x3D; 0	# 元素出队列    de">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2022/09/30/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-%E7%88%AC%E8%99%AB/1.jpg">
+<meta property="article:published_time" content="2022-09-30T02:35:20.000Z">
+<meta property="article:modified_time" content="2022-09-30T02:44:01.882Z">
+<meta property="article:author" content="听风">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/09/30/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E-%E7%88%AC%E8%99%AB/1.jpg">
+  
+  
+  
+  <title>从零开始做一个搜索引擎--爬虫实现 - 听风</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.9.2","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":"7C1QoQShmj2GocTUSsCfvl07-gzGzoHsz","app_key":"tGH8AvvvUAVa08GUUY7kX8YC","server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>听风</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="从零开始做一个搜索引擎--爬虫实现"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-30 10:35" pubdate>
+          2022年9月30日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          61 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="leancloud-page-views-container" class="post-meta" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="leancloud-page-views"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">从零开始做一个搜索引擎--爬虫实现</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="从零开始做一个搜索引擎–爬虫实现"><a href="#从零开始做一个搜索引擎–爬虫实现" class="headerlink" title="从零开始做一个搜索引擎–爬虫实现"></a>从零开始做一个搜索引擎–爬虫实现</h1><h2 id="1-队列实现"><a href="#1-队列实现" class="headerlink" title="1. 队列实现"></a>1. 队列实现</h2><p>使用广度优先爬取网页需要一个队列辅助存储网页的<code>url</code>，这里实现一个元素单一的队列，方便后续使用。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Queue</span>:<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        self.elements = []<br>        self.index = <span class="hljs-number">0</span><br>	<span class="hljs-comment"># 元素出队列</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">dequeue</span>(<span class="hljs-params">self</span>):<br>        element = self.elements[self.index]<br>        self.index += <span class="hljs-number">1</span><br>        <span class="hljs-keyword">return</span> element<br>	<span class="hljs-comment"># 元素入队列</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">enqueue</span>(<span class="hljs-params">self, element</span>):<br>        <span class="hljs-keyword">if</span> element[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>] == <span class="hljs-string">&quot;https&quot;</span> <span class="hljs-keyword">or</span> element[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>] == <span class="hljs-string">&quot;http&quot;</span>:<br>            <span class="hljs-keyword">if</span> element <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> self.elements:<br>                self.elements.append(element)<br>	<span class="hljs-comment"># 判断队列是否为空</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">isnull</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">if</span> self.index == <span class="hljs-built_in">len</span>(self.elements):<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2-深度优先与广度优先"><a href="#2-深度优先与广度优先" class="headerlink" title="2.深度优先与广度优先"></a>2.深度优先与广度优先</h2><p><img src="1.jpg" srcset="/img/loading.gif" lazyload alt="img"></p>
+<p>​                                                                                                                            图1</p>
+<p>若网页结构如上图，深度优先的爬取顺序为：A、B、D、E、I、C、F、G、H（递归实现）</p>
+<p>广度优先的爬取顺序为：A、B、C、D、E、F、G、H、I（队列实现）</p>
+<h2 id="3-广度优先爬取"><a href="#3-广度优先爬取" class="headerlink" title="3.广度优先爬取"></a>3.广度优先爬取</h2><p>使用上文提到的队列可以很简单的实现广度优先算法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span> unicodedata<br><span class="hljs-keyword">from</span> lxml <span class="hljs-keyword">import</span> etree<br><span class="hljs-keyword">from</span> tools <span class="hljs-keyword">import</span> Queue<br><span class="hljs-keyword">import</span> urllib3<br><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">import</span> os<br><br>urllib3.disable_warnings()<br><br><br><span class="hljs-comment"># 广度优先爬取</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">breadth_first</span>():<br>    headers = &#123;<br>        <span class="hljs-string">&#x27;user-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) &#x27;</span><br>                      <span class="hljs-string">&#x27;Chrome/105.0.0.0 &#x27;</span><br>                      <span class="hljs-string">&#x27;Safari/537.36 &#x27;</span><br>    &#125;<br><br>    url = <span class="hljs-string">&quot;https://news.sina.com.cn/&quot;</span><br>    resp = requests.get(url, headers=headers, verify=<span class="hljs-literal">False</span>)<br>    tree = etree.HTML(resp.text)<br>    <span class="hljs-comment"># 新浪首页的所有链接</span><br>    href_list = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(href_list)<br>    queue = Queue()<br>    <span class="hljs-comment"># 新浪首页的所有链接首先入队列</span><br>    <span class="hljs-keyword">for</span> href <span class="hljs-keyword">in</span> href_list:<br>        queue.enqueue(href)<br><br>    i = <span class="hljs-number">1</span><br>    <span class="hljs-comment"># 队列不为空则继续循环</span><br>    <span class="hljs-keyword">while</span> <span class="hljs-keyword">not</span> queue.isnull():<br>        <span class="hljs-keyword">try</span>:<br>            <span class="hljs-comment"># 队头元素出队</span><br>            url = queue.dequeue()<br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;crawling &quot;</span>, url)<br><br>            resp = requests.get(url, headers=headers, verify=<span class="hljs-literal">False</span>)<br>            text = resp.text.encode(resp.encoding).decode(resp.apparent_encoding)<br><br>            <span class="hljs-comment"># resp.encoding = &#x27;utf-8&#x27;</span><br>            tree = etree.HTML(text)<br><br>            <span class="hljs-comment"># 提取标题</span><br>            title = tree.xpath(<span class="hljs-string">&#x27;//h1[@class=&quot;main-title&quot;]/text()&#x27;</span>)<br>            title = <span class="hljs-string">&quot;&quot;</span>.join(title)<br><br>            contents = tree.xpath(<span class="hljs-string">&#x27;//div[@id=&quot;article&quot;]//p/text()&#x27;</span>)<br>            contents = [unicodedata.normalize(<span class="hljs-string">&#x27;NFKC&#x27;</span>, i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> contents]<br>            <span class="hljs-comment"># 提取正文</span><br>            content = <span class="hljs-string">&quot;&quot;</span>.join(contents)<br>            <span class="hljs-keyword">if</span> title == <span class="hljs-string">&#x27;&#x27;</span> <span class="hljs-keyword">or</span> content == <span class="hljs-string">&#x27;&#x27;</span>:<br>                <span class="hljs-keyword">continue</span><br><br>            data = &#123;<br>                <span class="hljs-string">&#x27;title&#x27;</span>: title,<br>                <span class="hljs-string">&#x27;content&#x27;</span>: content,<br>                <span class="hljs-string">&#x27;url&#x27;</span>: url<br>            &#125;<br>            <span class="hljs-comment"># 将标题，正文，链接写入json文件</span><br>            <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;html_breadth_first/&#x27;</span> + <span class="hljs-built_in">str</span>(i) + <span class="hljs-string">&#x27;.json&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>, mode=<span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>                f.write(json.dumps(data, indent=<span class="hljs-number">4</span>, ensure_ascii=<span class="hljs-literal">False</span>))<br>            <span class="hljs-comment"># 提取链接</span><br>            hrefs = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>            <span class="hljs-comment"># 新的链接入队列</span><br>            <span class="hljs-keyword">for</span> href <span class="hljs-keyword">in</span> hrefs:<br>                queue.enqueue(href)<br>            i += <span class="hljs-number">1</span><br>            <span class="hljs-keyword">if</span> i == <span class="hljs-number">2000</span>:  <span class="hljs-comment"># 爬取2000个网页则停止</span><br>                <span class="hljs-keyword">break</span><br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>            <span class="hljs-built_in">print</span>(e)<br>            <span class="hljs-keyword">pass</span><br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    os.makedirs(<span class="hljs-string">&quot;html_breadth_first&quot;</span>, exist_ok=<span class="hljs-literal">True</span>)<br>    breadth_first()<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="4-深度优先爬取"><a href="#4-深度优先爬取" class="headerlink" title="4.深度优先爬取"></a>4.深度优先爬取</h2><p>深度优先采取递归的方式实现，也可使用栈，这里只给出递归的实现方式。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span> unicodedata<br><span class="hljs-keyword">from</span> lxml <span class="hljs-keyword">import</span> etree<br><span class="hljs-keyword">import</span> urllib3<br><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">import</span> os<br><br>urllib3.disable_warnings()<br><br>exist_urls = []<br>num_pages = <span class="hljs-number">0</span><br>num_news = <span class="hljs-number">0</span><br>max_depth = <span class="hljs-number">10</span><br>max_news_num = <span class="hljs-number">1000</span><br>flag = <span class="hljs-number">0</span><br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">crawler</span>(<span class="hljs-params">url, depth=<span class="hljs-number">1</span></span>):<br>    <span class="hljs-keyword">global</span> num_pages, num_news<br>    <span class="hljs-keyword">global</span> exist_urls<br>    <span class="hljs-keyword">global</span> max_depth, flag<br>    exist_urls.append(url)<br>    <span class="hljs-keyword">if</span> num_news == max_news_num <span class="hljs-keyword">or</span> flag &gt;= <span class="hljs-number">20</span>:<br>        <span class="hljs-keyword">return</span><br>    headers = &#123;<br>        <span class="hljs-string">&#x27;user-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) &#x27;</span><br>                      <span class="hljs-string">&#x27;Chrome/105.0.0.0 &#x27;</span><br>                      <span class="hljs-string">&#x27;Safari/537.36 &#x27;</span><br>    &#125;<br>    <span class="hljs-keyword">if</span> url[<span class="hljs-number">0</span>:<span class="hljs-number">5</span>] == <span class="hljs-string">&quot;https&quot;</span> <span class="hljs-keyword">or</span> url[<span class="hljs-number">0</span>:<span class="hljs-number">4</span>] == <span class="hljs-string">&quot;http&quot;</span>:<br>        <span class="hljs-keyword">try</span>:<br>            num_pages += <span class="hljs-number">1</span><br>            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;正在爬取第&quot;</span>, num_pages, <span class="hljs-string">&quot;个网页&quot;</span>, <span class="hljs-string">&quot;深度为&quot;</span>, depth, url)<br><br>            resp = requests.get(url, headers=headers, verify=<span class="hljs-literal">False</span>, timeout=(<span class="hljs-number">3</span>, <span class="hljs-number">3</span>))<br>            resp.encoding = <span class="hljs-string">&#x27;utf-8&#x27;</span><br>            tree = etree.HTML(resp.text)<br><br>            <span class="hljs-comment"># 提取标题</span><br>            title = tree.xpath(<span class="hljs-string">&#x27;//h1[@class=&quot;main-title&quot;]/text()&#x27;</span>)<br>            contents = tree.xpath(<span class="hljs-string">&#x27;//div[@id=&quot;article&quot;]//p/text()&#x27;</span>)<br>            contents = [unicodedata.normalize(<span class="hljs-string">&#x27;NFKC&#x27;</span>, i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> contents]<br>            <span class="hljs-comment"># 提取正文</span><br>            content = <span class="hljs-string">&quot;&quot;</span>.join(contents)<br>            <span class="hljs-keyword">if</span> title == <span class="hljs-string">&#x27;&#x27;</span> <span class="hljs-keyword">or</span> content == <span class="hljs-string">&#x27;&#x27;</span>:<br>                flag += <span class="hljs-number">1</span><br>                <span class="hljs-keyword">pass</span><br>            <span class="hljs-keyword">else</span>:<br>                data = &#123;<br>                    <span class="hljs-string">&#x27;title&#x27;</span>: title,<br>                    <span class="hljs-string">&#x27;content&#x27;</span>: content,<br>                    <span class="hljs-string">&#x27;url&#x27;</span>: url<br>                &#125;<br>                num_news += <span class="hljs-number">1</span><br>                <span class="hljs-comment"># 将标题，正文，链接写入json文件</span><br>                <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;html_depth_first/&#x27;</span> + <span class="hljs-built_in">str</span>(num_news) + <span class="hljs-string">&#x27;.json&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>, mode=<span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>                    f.write(json.dumps(data, indent=<span class="hljs-number">4</span>, ensure_ascii=<span class="hljs-literal">False</span>))<br><br>            <span class="hljs-comment"># 提取链接</span><br>            hrefs = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>            unique_urls = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(hrefs) - <span class="hljs-built_in">set</span>(exist_urls))<br>            <span class="hljs-keyword">for</span> unique_url <span class="hljs-keyword">in</span> unique_urls:<br>                <span class="hljs-keyword">if</span> depth &lt; max_depth:<br>                    crawler(unique_url, depth + <span class="hljs-number">1</span>)<br>        <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:<br>            <span class="hljs-built_in">print</span>(e)<br>            <span class="hljs-keyword">pass</span><br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">depth_first</span>():<br>    <span class="hljs-keyword">global</span> exist_urls, flag<br><br>    headers = &#123;<br>        <span class="hljs-string">&#x27;user-agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) &#x27;</span><br>                      <span class="hljs-string">&#x27;Chrome/105.0.0.0 &#x27;</span><br>                      <span class="hljs-string">&#x27;Safari/537.36 &#x27;</span><br>    &#125;<br>    url = <span class="hljs-string">&quot;https://news.sina.com.cn/&quot;</span><br>    resp = requests.get(url, headers=headers, verify=<span class="hljs-literal">False</span>)<br>    tree = etree.HTML(resp.text)<br>    <span class="hljs-comment"># 新浪首页的所有链接</span><br>    href_list = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>    <span class="hljs-built_in">print</span>(href_list)<br>    exist_urls += <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(href_list))<br>    <span class="hljs-keyword">for</span> href <span class="hljs-keyword">in</span> href_list:<br>        flag = <span class="hljs-number">0</span><br>        crawler(href, depth=<span class="hljs-number">2</span>)<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    os.makedirs(<span class="hljs-string">&quot;html_depth_first&quot;</span>, exist_ok=<span class="hljs-literal">True</span>)<br>    depth_first()<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="5-使用feapder框架加速爬取"><a href="#5-使用feapder框架加速爬取" class="headerlink" title="5.使用feapder框架加速爬取"></a>5.使用<code>feapder</code>框架加速爬取</h2><p><code>feapder</code>框架是一个开源的爬虫框架，<a target="_blank" rel="noopener" href="https://boris-code.gitee.io/feapder/#/usage/AirSpider">官方链接</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> feapder<br><span class="hljs-keyword">import</span> unicodedata<br><span class="hljs-keyword">from</span> lxml <span class="hljs-keyword">import</span> etree<br><span class="hljs-keyword">from</span> feapder <span class="hljs-keyword">import</span> setting<br><span class="hljs-keyword">import</span> urllib3<br><span class="hljs-keyword">import</span> json<br><span class="hljs-keyword">import</span> os<br><br>urllib3.disable_warnings()<br>setting.SPIDER_MAX_RETRY_TIMES = <span class="hljs-number">0</span><br>num_pages = <span class="hljs-number">0</span><br>exist_urls = []<br><br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">AirSpiderTest</span>(feapder.AirSpider):<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">start_requests</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-keyword">yield</span> feapder.Request(<span class="hljs-string">&quot;https://news.sina.com.cn/&quot;</span>)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">parse</span>(<span class="hljs-params">self, request, response</span>):<br>        response.encoding_errors = <span class="hljs-string">&#x27;ignore&#x27;</span><br>        <span class="hljs-comment"># text = response.text.encode(response.encoding).decode(response.apparent_encoding)</span><br>        text = response.text<br>        tree = etree.HTML(text)<br>        <span class="hljs-comment"># 新浪首页的所有链接</span><br>        href_list = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>        href_list = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(href_list))<br>        <span class="hljs-keyword">for</span> href <span class="hljs-keyword">in</span> href_list:<br>            <span class="hljs-keyword">yield</span> feapder.Request(href, callback=self.parser_news)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">parser_news</span>(<span class="hljs-params">self, request, response</span>):<br>        <span class="hljs-keyword">global</span> num_pages, exist_urls<br><br>        response.encoding_errors = <span class="hljs-string">&#x27;ignore&#x27;</span><br>        text = response.text<br>        <span class="hljs-comment"># text = response.text.encode(response.encoding).decode(response.apparent_encoding)</span><br>        tree = etree.HTML(text)<br>        title = tree.xpath(<span class="hljs-string">&#x27;//h1[@class=&quot;main-title&quot;]/text()&#x27;</span>)<br>        contents = tree.xpath(<span class="hljs-string">&#x27;//div[@id=&quot;article&quot;]//p/text()&#x27;</span>)<br>        contents = [unicodedata.normalize(<span class="hljs-string">&#x27;NFKC&#x27;</span>, i) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> contents]<br>        title = <span class="hljs-string">&quot;&quot;</span>.join(title)<br>        content = <span class="hljs-string">&quot;&quot;</span>.join(contents)<br>        hrefs = tree.xpath(<span class="hljs-string">&#x27;//a/@href&#x27;</span>)<br>        hrefs = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(hrefs))<br><br>        <span class="hljs-keyword">if</span> title == <span class="hljs-string">&#x27;&#x27;</span> <span class="hljs-keyword">or</span> content == <span class="hljs-string">&#x27;&#x27;</span>:<br>            <span class="hljs-keyword">return</span><br>        <span class="hljs-keyword">else</span>:<br>            data = &#123;<br>                <span class="hljs-string">&#x27;title&#x27;</span>: title,<br>                <span class="hljs-string">&#x27;content&#x27;</span>: content,<br>                <span class="hljs-string">&#x27;url&#x27;</span>: request.url<br>            &#125;<br>            <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;html/&#x27;</span> + <span class="hljs-built_in">str</span>(num_pages) + <span class="hljs-string">&#x27;.json&#x27;</span>, encoding=<span class="hljs-string">&#x27;utf-8&#x27;</span>, mode=<span class="hljs-string">&#x27;w&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>                f.write(json.dumps(data, indent=<span class="hljs-number">4</span>, ensure_ascii=<span class="hljs-literal">False</span>))<br>            num_pages += <span class="hljs-number">1</span><br>            <span class="hljs-keyword">if</span> num_pages == <span class="hljs-number">2000</span>:<br>                <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br><br>        unique_urls = <span class="hljs-built_in">list</span>(<span class="hljs-built_in">set</span>(hrefs) - <span class="hljs-built_in">set</span>(exist_urls.copy()))<br>        exist_urls += unique_urls<br>        <span class="hljs-keyword">for</span> unique_url <span class="hljs-keyword">in</span> unique_urls:<br>            <span class="hljs-keyword">yield</span> feapder.Request(unique_url, callback=self.parser_news)<br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">validate</span>(<span class="hljs-params">self, request, response</span>):<br>        <span class="hljs-keyword">if</span> response.status_code != <span class="hljs-number">200</span>:<br>            <span class="hljs-keyword">raise</span> Exception(<span class="hljs-string">&quot;response code not 200&quot;</span>)  <span class="hljs-comment"># 重试</span><br><br>    <span class="hljs-comment"># 下载中间件用于在请求之前，对请求做一些处理，如添加cookie、header等。写法如下：</span><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">download_midware</span>(<span class="hljs-params">self, request</span>):<br>        request.headers = &#123;<br>            <span class="hljs-string">&#x27;User-Agent&#x27;</span>: <span class="hljs-string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) &#x27;</span><br>                          <span class="hljs-string">&#x27;Chrome/105.0.0.0 &#x27;</span><br>                          <span class="hljs-string">&#x27;Safari/537.36 &#x27;</span>&#125;<br>        request.timeout = (<span class="hljs-number">3</span>, <span class="hljs-number">3</span>)<br>        <span class="hljs-keyword">return</span> request<br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    os.makedirs(<span class="hljs-string">&quot;html&quot;</span>, exist_ok=<span class="hljs-literal">True</span>)<br>    AirSpiderTest(thread_count=<span class="hljs-number">12</span>).start()<br><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E7%88%AC%E8%99%AB/" class="category-chain-item">爬虫</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E7%88%AC%E8%99%AB/python/" class="category-chain-item">python</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>从零开始做一个搜索引擎--爬虫实现</div>
+      <div>http://example.com/2022/09/30/搜索引擎-爬虫/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>听风</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月30日</div>
+        </div>
+      
+      
+      <div class="license-meta-item">
+        <div>许可协议</div>
+        <div>
+          
+            
+            
+              <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+              <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                <i class="iconfont icon-by"></i>
+              </span>
+              </a>
+            
+          
+        </div>
+      </div>
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/19/%E5%9E%83%E5%9C%BE%E5%88%86%E7%B1%BB%E5%B0%8Fdemo/" title="垃圾分类小demo">
+                        <span class="hidden-mobile">垃圾分类小demo</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div id="valine"></div>
+  <script type="text/javascript">
+    Fluid.utils.loadComments('#valine', function() {
+      Fluid.utils.createScript('https://lib.baomitu.com/valine/1.4.17/Valine.min.js', function() {
+        var options = Object.assign(
+          {"appId":"7C1QoQShmj2GocTUSsCfvl07-gzGzoHsz","appKey":"tGH8AvvvUAVa08GUUY7kX8YC","path":"window.location.pathname","placeholder":"说点什么","avatar":"retro","meta":["nick","mail","link"],"requiredFields":[],"pageSize":10,"lang":"zh-CN","highlight":false,"recordIP":false,"serverURLs":"","emojiCDN":null,"emojiMaps":null,"enableQQ":false},
+          {
+            el: "#valine",
+            path: window.location.pathname
+          }
+        )
+        new Valine(options);
+        Fluid.utils.waitElementVisible('#valine .vcontent', () => {
+          var imgSelector = '#valine .vcontent img:not(.vemoji)';
+          Fluid.plugins.imageCaption(imgSelector);
+          Fluid.plugins.fancyBox(imgSelector);
+        })
+      });
+    });
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="leancloud-site-pv-container" style="display: none">
+        总访问量 
+        <span id="leancloud-site-pv"></span>
+         次
+      </span>
+    
+    
+      <span id="leancloud-site-uv-container" style="display: none">
+        总访客数 
+        <span id="leancloud-site-uv"></span>
+         人
+      </span>
+    
+    
+
+  
+</div>
+
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      headingSelector : CONFIG.toc.headingSelector || 'h1,h2,h3,h4,h5,h6',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      collapseDepth   : CONFIG.toc.collapseDepth || 0,
+      scrollSmooth    : true,
+      headingsOffset  : -boardTop
+    });
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script defer src="/js/leancloud.js" ></script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
